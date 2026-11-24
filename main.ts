@@ -56,9 +56,17 @@ function score(candidate: Candidate): number {
 }
 
 function pick(candidates: Candidate[]): Candidate {
+  if (candidates.length === 0) {
+    throw new Error("no candidates to pick from");
+  }
   let best = candidates[0];
   for (const candidate of candidates.slice(1)) {
-    if (score(candidate) > score(best)) {
+    // Ties break on vividness first (the judge's top criterion), then on
+    // the earlier letter, so the pick stays deterministic either way.
+    if (
+      score(candidate) > score(best) ||
+      (score(candidate) === score(best) && candidate.vivid > best.vivid)
+    ) {
       best = candidate;
     }
   }
